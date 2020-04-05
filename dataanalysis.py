@@ -8,6 +8,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from sklearn import preprocessing
 from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import LogisticRegression
+from sklearn import svm
 
 
 #Read in data
@@ -100,6 +101,15 @@ plt.show()
 #Logistic Regression
 x_train = bag_of_words
 y_train = transformed_labels
-scores = cross_val_score(LogisticRegression(max_iter=5000), x_train, y_train, cv = 5)
+scores = cross_val_score(LogisticRegression(max_iter=50), x_train, y_train, cv = 5)
 print(scores)
 print("Mean cross-validation accuracy: {:.2f}".format(np.mean(scores) * 100),'%')
+
+mnbc = MultinomialNB()
+scores = cross_val_score(mnbc, x_train, y_train, cv = 5)
+print(scores)
+print("Mean cross-validation accuracy: {:.2f}".format(np.mean(scores) * 100),'%')
+
+
+#can refer to this link:
+#https://github.com/miguelfzafra/Latest-News-Classifier/blob/master/0.%20Latest%20News%20Classifier/04.%20Model%20Training/09.%20MT%20-%20MultinomialNB.ipynb
