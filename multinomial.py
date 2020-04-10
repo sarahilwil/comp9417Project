@@ -37,6 +37,8 @@ transformed_labels = le.transform(labels_df.ravel())
 no_topics = len(Counter(transformed_labels).keys())
 labels = le.inverse_transform(range(no_topics))
 
+from tf_idf import features_train, labels_train
+
 def getAP(a,d,n): 
     res = []
     curr_term = a
@@ -64,7 +66,7 @@ y_train = transformed_labels
 # print(random_search.best_params_)
 
 from sklearn.model_selection import GridSearchCV
-###grid search to find the best region for alpha
+###grid search to find the best region for alpha from using default bag of words
 mnbc = MultinomialNB()
 alpha_range = getAP(0.1, 0.01, 1000)
 param_grid = {'alpha': alpha_range}
@@ -74,10 +76,31 @@ grid_search = GridSearchCV( estimator=mnbc,
                             cv=3)
 grid_search.fit(x_train, y_train)
 print(grid_search.best_params_)
-best_mnbc = grid_search.best_estimator_
+best_mnbc_in_bag_of_words = grid_search.best_estimator_
 
-scores = cross_val_score(best_mnbc, x_train, y_train, cv = 5)
-print(scores)
+
+mnbc = MultinomialNB()
+alpha_range = getAP(0.1, 0.01, 1000)
+param_grid = {'alpha': alpha_range}
+grid_search_1 = GridSearchCV( estimator=mnbc,
+                            param_grid=param_grid,
+                            scoring='accuracy',
+                            cv=3)
+grid_search_1.fit(features_train, labels_train)
+print(grid_search_1.best_params_)
+best_mnbc = grid_search_1.best_estimator_
+
+grid_search_1.fit(x_train, y_train)
+print(grid_search_1.best_params_)
+best_mnbc_in_tfidf = grid_search_1.best_estimator_
+
+
+bag_of_words_scores = cross_val_score(best_mnbc_in_bag_of_words, x_train, y_train, cv = 5)
+tfidf_scores = cross_val_score(best_mnbc_in_tfidf, features_train, labels_train, cv = 5)
+print('bag of words')
+print(bag_of_words_scores)
+print('tfidf')
+print(tfidf_scores)
 print("Mean cross-validation accuracy: {:.2f}".format(np.mean(scores) * 100),'%')
 
 
