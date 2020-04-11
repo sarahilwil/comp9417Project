@@ -71,7 +71,7 @@ pipe = make_pipeline(TfidfVectorizer(min_df = 5), LogisticRegression())
 grid = GridSearchCV(pipe) # don't know if i should also put C in 
 grid.fit(x_train, y_train)
 cv_score = grid.best_score_
-print(f"Validation score after tf_idf : {cv_score}")
+print(f"Validation score after tf_idf : {cv_score}") 
 '''       
 # tune min_df-> minimum number of docs a word needs to appear 
 # if this doesn't affect accuracy it can aid processesing speed
